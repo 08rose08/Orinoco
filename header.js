@@ -8,7 +8,7 @@ document.getElementById('header').innerHTML=`
     </button>
     <div class="collapse navbar-collapse " id="navbarNavAltMarkup">
         <div class="navbar-nav">
-            <a class="nav-item nav-link active" href="#">Accueil <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active" href="index.html">Accueil <span class="sr-only">(current)</span></a>
             <a class="nav-item nav-link" href="panier.html">Panier</a>
         </div>
     </div>

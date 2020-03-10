@@ -9,6 +9,7 @@ class TeddyManager {
         console.log('coucou');
         this.teddies = null;
         this.teddy = null;
+        
     }
 
     getAllTeddy(){
@@ -63,15 +64,16 @@ class TeddyManager {
         console.log(id);
         fetch(APIURL + "/teddies/" + id)
         .then(response => response.json())
-        .then(function(response){
-            let teddy = response;
-            console.log(teddy);
-            document.getElementById('nom').textContent = teddy.name;
-            document.getElementById('image').setAttribute('src', teddy.imageUrl);
-            document.getElementById('image').setAttribute('alt', 'une photo de ' + teddy.name);
-            document.getElementById('description').textContent = teddy.description;
-            document.getElementById('prix').textContent = teddy.price/100 + '€';
-            teddy.colors.forEach(function(color){
+        .then((response)=>{
+            console.log(this.teddy);
+            this.teddy = response;
+            console.log(this.teddy);
+            document.getElementById('nom').textContent = this.teddy.name;
+            document.getElementById('image').setAttribute('src', this.teddy.imageUrl);
+            document.getElementById('image').setAttribute('alt', 'une photo de ' + this.teddy.name);
+            document.getElementById('description').textContent = this.teddy.description;
+            document.getElementById('prix').textContent = this.teddy.price/100 + '€';
+            this.teddy.colors.forEach(function(color){
                 let couleur = document.createElement("option");
                 couleur.setAttribute('value', color);
                 couleur.textContent = color;
@@ -82,19 +84,73 @@ class TeddyManager {
             console.log('Il y a eu un problème avec fetch: ' + error.message);
         });
     }
+    addTeddy(event){
+        console.log(this.teddy);
+        //event.preventDefault();
+        let strPanierBack = localStorage.getItem('strPanier');
+        
+        if(strPanierBack){
+            let panierBack = JSON.parse(strPanierBack);
+            if(Array.isArray(panierBack)){
+                let teddyPanier = {
+                    nom : this.teddy.name,
+                    prix : this.teddy.price,
+                }
+                console.log(teddyPanier);
+                panierBack.push(teddyPanier);
+                console.log(panierBack);
+                let strPanierGo = JSON.stringify(panierBack);
+                console.log(strPanierGo);
+                localStorage.setItem('strPanier', strPanierGo);
+            }else{
+                let tableauPanier = [];
+                let teddyPanier = {
+                    nom : this.teddy.name,
+                    prix : this.teddy.price,
+                }
+                console.log(teddyPanier);
+                tableauPanier.push(teddyPanier);
+                console.log(tableauPanier);
+                let strPanierGo = JSON.stringify(tableauPanier);
+                console.log(strPanierGo);
+                localStorage.setItem('strPanier', strPanierGo);
+            }
+        }else{
+            let tableauPanier = [];
+            let teddyPanier = {
+                nom : this.teddy.name,
+                prix : this.teddy.price,
+            }
+            console.log(teddyPanier);
+            tableauPanier.push(teddyPanier);
+            console.log(tableauPanier);
+            let strPanierGo = JSON.stringify(tableauPanier);
+            console.log(strPanierGo);
+            localStorage.setItem('strPanier', strPanierGo);
+        }
+        
+        /*let resultat = window.confirm('Voir le panier ?');
+        if (resultat = true){
+            window.location.href="panier.html";
+        }*/
+    }
     
-    /*async showOneTeddy(){
-        const teddyOb = this.getOneTeddy();
-        console.log('étape : showOneTeddy');
-        console.log(teddy);
-        document.getElementById('image').setAttribute('src', teddyOb.imageUrl);
-        document.getElementById('image').setAttribute('alt', 'une photo de ' + teddyOb.name);
-        document.getElementById('nom').textContent = teddyOb.name;
-        document.getElementById('description').textContent = teddyOb.description;
-        document.getElementById('prix').textContent = teddyOb.price;
-        teddyOb.colors.forEach(function(color){
+    putInTheStorage(){
+        document.getElementById('panier').addEventListener('click', (event)=>{
+            console.log(this);
+            this.addTeddy(event);
+        }); 
+        //document.getElementById('panier').addEventListener('click', this.addTeddy); 
+    };
 
-        });
+    getFromTheStorage(){
+        let strPanierBack = localStorage.getItem('strPanier');
+        console.log(strPanierBack);
+        let panierBack = JSON.parse(strPanierBack);
+        console.log(panierBack);
+        showPanier()
+    }
+    showPanier(){
 
-    }*/
+    }
 }

@@ -13,30 +13,6 @@
 <body>
     <header id="header">
     </header>
-    <h1 id="nom"></h1>
-    <section class="card text-white bg-dark border-dark m-4 mb-3">
-        <div class="row no-gutters">
-            <div class="col-md-7">
-                <img id="image" class="w-100 border-dark">
-            </div>
-            <div class="col-md-5">
-                <div class="card-body">
-                    
-                    <h2 class="card-title">Description</h2>
-                    <p id="description" class=""></p>
-                    <form method="oui" action="oui">
-                        <p>
-                            <h2 id="choix"><label for="couleur">Choississez la couleur de votre teddy:</label></h2>
-                            <select name="couleur" id="couleurs">
-                            </select>
-                        </p>
-                    </form>
-                    <p id="prix"></p>
-                    <a href="panier.html" class="btn btn-dark" id="panier">Mettre dans le panier</a>
-                </div>
-            </div>
-        </div>
-    </section>
     <script src="header.js"></script>
     <script src="TeddyManager.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -44,8 +20,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script>
         let teddyManager=new TeddyManager();
-        teddyManager.getOneTeddy();
-        teddyManager.putInTheStorage();
+        teddyManager.getFromTheStorage();
     </script>  
 </body>
 </html>
