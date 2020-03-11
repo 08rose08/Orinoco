@@ -142,15 +142,49 @@ class TeddyManager {
         }); 
         //document.getElementById('panier').addEventListener('click', this.addTeddy); 
     };
-
+    
     getFromTheStorage(){
         let strPanierBack = localStorage.getItem('strPanier');
         console.log(strPanierBack);
-        let panierBack = JSON.parse(strPanierBack);
-        console.log(panierBack);
-        showPanier()
-    }
-    showPanier(){
+        let panierBacks = JSON.parse(strPanierBack);
+        console.log(panierBacks);
 
-    }
+        if(strPanierBack){
+            let panierBack = JSON.parse(strPanierBack);
+            if(Array.isArray(panierBack)){
+                panierBacks.forEach(function(panierBack){
+                    nom.setAttribute('class','');
+                    nom.textContent = panierBack.nom;
+                    prix.setAttribute('class','')
+                    prix.textContent = panierBack.prix /100 + '€';
+                    item.appendChild(nom);
+                    item.appendChild(prix);
+                })
+                let viderPanier = document.createElement("p");
+                viderPanier.setAttribute('class', '');              
+                viderPanier.textContent = 'Vider le panier';
+                panier.appendChild(viderPanier);
+                viderPanier.addEventListener('click', ()=>{
+                    localStorage.clear();
+                    this.getFromTheStorage();
+                    viderPanier.remove();
+                })
+            }else{
+                console.log('ça merde  = pas un tableau');
+            }
+        }else{
+            let panierVide = document.createElement("p");
+            panierVide.setAttribute('class', '');
+            panierVide.textContent = 'Panier vide';
+            panier.appendChild(panierVide);
+            item.remove();
+            
+            
+        }
+        
+                    
+        
+        
+        
+    }   
 }
