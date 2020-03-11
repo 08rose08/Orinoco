@@ -96,7 +96,7 @@ class TeddyManager {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
                     id : this.teddy.id,
-                    quantite : document.getElementById("quantite").value
+                    //quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
                 panierBack.push(teddyPanier);
@@ -110,7 +110,7 @@ class TeddyManager {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
                     id : this.teddy.id,
-                    quantite : document.getElementById("quantite").value
+                    //quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
                 tableauPanier.push(teddyPanier);
@@ -125,7 +125,7 @@ class TeddyManager {
                 nom : this.teddy.name,
                 prix : this.teddy.price,
                 id : this.teddy.id,
-                quantite : document.getElementById("quantite").value
+                //quantite : document.getElementById("quantite").value
             }
             console.log(teddyPanier);
             tableauPanier.push(teddyPanier);
@@ -173,7 +173,8 @@ class TeddyManager {
                     <input type="number" min="0" value="` + panierBack.quantite + `"class="form-control h-100" name="quantite" id="quantite">
                     </div>`;*/
                     let annule = document.createElement("i");
-                    annule.setAttribute('class', 'fas fa-times-circle');
+                    annule.setAttribute('class', 'fas fa-times-circle close');
+                    annule.setAttribute('id', 'retireTeddy');
                     let hr = document.createElement("hr");
                     /*let plus = document.createElement("i");
                     plus.setAttribute('class', 'fas fa-plus-circle w-10');
@@ -194,9 +195,13 @@ class TeddyManager {
                         }
                     })*/
                 })
+                let total = 0;
+                panierBacks.forEach(function(panierBack){
+                    total += panierBack.prix/100;
+                })
                 let prixTotal = document.createElement("div");
                 prixTotal.setAttribute('class', 'p-4');
-                prixTotal.textContent = 'Prix total :';
+                prixTotal.textContent = 'Prix total : ' + total + '€';
                 panierInterieur.appendChild(prixTotal);
                 let viderPanier = document.createElement("button");
                 viderPanier.setAttribute('class', 'btn btn-danger w-50');              
@@ -218,11 +223,60 @@ class TeddyManager {
             panierVide.textContent = 'Panier vide';
             panier.appendChild(panierVide);  
         }
+        document.getElementById('retireTeddy').addEventListener('click', (event=>{
+            console.log('je veux retirer ce teddy');
+            this.removeTeddy(event);
+        }))
+        document.getElementById('envoiPost').addEventListener('click', (event)=>{
+            console.log('c\'est cliqué');
+            this.controlPanier(event);
+        })
+    }
+    removeTeddy(event){
+        console.log('ok j\'ai vu que tu voulais le retirer');
+        //recupérer le array
+        // retirer ce teddy
+        // strinfy le array
+        // mettre à jour le localStorage
+        // relancer getFromTheStorage  
+    }
+    controlPanier(event){
+        event.preventDefault();
+        console.log('Go control !');
+        let chiffre = /[0-9]/;
+        let verifAt = /.+@.+\..+/;
+        let formNom = document.getElementById('formNom').value;
+        let formPrenom = document.getElementById('formPrenom').value;
+        let formVille = document.getElementById('formVille').value;
+        let formMail= document.getElementById('formMail').value;
+        if(chiffre.test(formNom)==true){
+            console.log('nom invalide');
+        }else{
+            console.log('nom ok')
+        }
+        if(chiffre.test(formPrenom)==true){
+            console.log('Prénom invalide');
+        }else{
+            console.log('prénom ok')
+        }
+        if(chiffre.test(formVille)==true){
+            console.log('Ville invalide');
+        }else{
+            console.log('ville ok')
+        }
+        if(verifAt.test(formMail)==false){
+            console.log('mail invalide')
+        }else{
+            console.log('mail ok')
+        }
+        if(chiffre.test(formNom)==false && chiffre.test(formPrenom)==false && chiffre.test(formVille)==false && verifAt.test(formMail)==true){
+            console.log('On peut POST !')
+            
 
-        
-                    
-        
-        
-        
-    }   
+        }else{
+            console.log('il reste un problème');
+            
+        }
+    }
+      
 }
