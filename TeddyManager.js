@@ -95,6 +95,8 @@ class TeddyManager {
                 let teddyPanier = {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
+                    id : this.teddy.id,
+                    quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
                 panierBack.push(teddyPanier);
@@ -107,6 +109,8 @@ class TeddyManager {
                 let teddyPanier = {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
+                    id : this.teddy.id,
+                    quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
                 tableauPanier.push(teddyPanier);
@@ -120,6 +124,8 @@ class TeddyManager {
             let teddyPanier = {
                 nom : this.teddy.name,
                 prix : this.teddy.price,
+                id : this.teddy.id,
+                quantite : document.getElementById("quantite").value
             }
             console.log(teddyPanier);
             tableauPanier.push(teddyPanier);
@@ -153,22 +159,56 @@ class TeddyManager {
             let panierBack = JSON.parse(strPanierBack);
             if(Array.isArray(panierBack)){
                 panierBacks.forEach(function(panierBack){
-                    nom.setAttribute('class','');
+                    let item = document.createElement("div");
+                    item.setAttribute('class', 'item d-sm-flex justify-content-between flex-row');
+                    let nom = document.createElement("p");
+                    nom.setAttribute('class','w-50');
                     nom.textContent = panierBack.nom;
-                    prix.setAttribute('class','')
+                    let prix = document.createElement("p");
+                    prix.setAttribute('class','w-25');
                     prix.textContent = panierBack.prix /100 + '€';
+                    /*let quantite = document.createElement("form");
+                    quantite.innerHTML = `<div class="form-group">
+                    <label for="quantite">Quantité :</label>
+                    <input type="number" min="0" value="` + panierBack.quantite + `"class="form-control h-100" name="quantite" id="quantite">
+                    </div>`;*/
+                    let annule = document.createElement("i");
+                    annule.setAttribute('class', 'fas fa-times-circle');
+                    let hr = document.createElement("hr");
+                    /*let plus = document.createElement("i");
+                    plus.setAttribute('class', 'fas fa-plus-circle w-10');
+                    let minus = document.createElement("i");
+                    minus.setAttribute('class', 'fas fa-minus-circle w-10');*/
+                    panierInterieur.appendChild(item);
                     item.appendChild(nom);
                     item.appendChild(prix);
+                    //item.appendChild(quantite);
+                    item.appendChild(annule);
+                    panierInterieur.appendChild(hr);
+                    //item.appendChild(plus);
+                    //item.appendChild(minus);
+                    /*quantite.addEventListener('change', ()=>{
+                        if(quantite.value==0){
+                            console.log('0 dans le panier');
+                            item.remove();
+                        }
+                    })*/
                 })
-                let viderPanier = document.createElement("p");
-                viderPanier.setAttribute('class', '');              
+                let prixTotal = document.createElement("div");
+                prixTotal.setAttribute('class', 'p-4');
+                prixTotal.textContent = 'Prix total :';
+                panierInterieur.appendChild(prixTotal);
+                let viderPanier = document.createElement("button");
+                viderPanier.setAttribute('class', 'btn btn-danger w-50');              
                 viderPanier.textContent = 'Vider le panier';
                 panier.appendChild(viderPanier);
                 viderPanier.addEventListener('click', ()=>{
                     localStorage.clear();
                     this.getFromTheStorage();
                     viderPanier.remove();
+                    document.getElementById('panierInterieur').remove();
                 })
+                
             }else{
                 console.log('ça merde  = pas un tableau');
             }
@@ -176,11 +216,9 @@ class TeddyManager {
             let panierVide = document.createElement("p");
             panierVide.setAttribute('class', '');
             panierVide.textContent = 'Panier vide';
-            panier.appendChild(panierVide);
-            item.remove();
-            
-            
+            panier.appendChild(panierVide);  
         }
+
         
                     
         

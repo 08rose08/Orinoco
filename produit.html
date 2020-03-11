@@ -24,12 +24,16 @@
                     
                     <h2 class="card-title">Description</h2>
                     <p id="description" class=""></p>
-                    <form method="oui" action="oui">
-                        <p>
-                            <h2 id="choix"><label for="couleur">Choississez la couleur de votre teddy:</label></h2>
+                    <form>
+                        <div class="form-group">
+                            <h2 class="choix"><label for="couleur">Couleur :</label></h2>
                             <select name="couleur" id="couleurs">
                             </select>
-                        </p>
+                        </div>
+                        <!--<div class="form-group">
+                            <h2 class="choix"><label for="quantite">Quantité :</label></h2>
+                            <input type="number" min="1" value="1" name="quantite" id="quantite">
+                        </div>-->
                     </form>
                     <p id="prix"></p>
                     <a href="panier.html" class="btn btn-dark" id="panier">Mettre dans le panier</a>

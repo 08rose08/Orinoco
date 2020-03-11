@@ -20,6 +20,13 @@ h1{
     background-repeat: no-repeat;
     background-position: center;
 }
-h2.card-title, h2#choix{
+h2.card-title, h2.choix{
     font-size: 150%!important;
+}
+hr{
+    color : #343a40;
+    width: 90%;
+}
+.fas{
+    color : #343a40;
 }
