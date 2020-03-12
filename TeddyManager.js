@@ -1,4 +1,4 @@
-const APIURL = "http://localhost:3000/api";
+const APIURL = "http://localhost:3000/api/teddies/";
 class TeddyManager {
     /*appel api, 
     parse la réponse
@@ -9,6 +9,9 @@ class TeddyManager {
         console.log('coucou');
         this.teddies = null;
         this.teddy = null;
+        this.panierBacks = null;
+        this.contact = null;
+        this.product_id = null;
         
     }
 
@@ -22,7 +25,7 @@ class TeddyManager {
                     throw new Error('error dans appel');
                 }
             };
-            appel.open("GET", APIURL + "/teddies");
+            appel.open("GET", APIURL);
             appel.send();
         });  
     }
@@ -62,7 +65,7 @@ class TeddyManager {
     getOneTeddy(){
         let id = location.search.substring(4); 
         console.log(id);
-        fetch(APIURL + "/teddies/" + id)
+        fetch(APIURL + id)
         .then(response => response.json())
         .then((response)=>{
             console.log(this.teddy);
@@ -95,7 +98,7 @@ class TeddyManager {
                 let teddyPanier = {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
-                    id : this.teddy.id,
+                    id : this.teddy._id,
                     //quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
@@ -109,7 +112,7 @@ class TeddyManager {
                 let teddyPanier = {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
-                    id : this.teddy.id,
+                    id : this.teddy._id,
                     //quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
@@ -124,7 +127,7 @@ class TeddyManager {
             let teddyPanier = {
                 nom : this.teddy.name,
                 prix : this.teddy.price,
-                id : this.teddy.id,
+                id : this.teddy._id,
                 //quantite : document.getElementById("quantite").value
             }
             console.log(teddyPanier);
@@ -158,62 +161,113 @@ class TeddyManager {
         if(strPanierBack){
             let panierBack = JSON.parse(strPanierBack);
             if(Array.isArray(panierBack)){
-                panierBacks.forEach(function(panierBack){
-                    let item = document.createElement("div");
-                    item.setAttribute('class', 'item d-sm-flex justify-content-between flex-row');
-                    let nom = document.createElement("p");
-                    nom.setAttribute('class','w-50');
-                    nom.textContent = panierBack.nom;
-                    let prix = document.createElement("p");
-                    prix.setAttribute('class','w-25');
-                    prix.textContent = panierBack.prix /100 + '€';
-                    /*let quantite = document.createElement("form");
-                    quantite.innerHTML = `<div class="form-group">
-                    <label for="quantite">Quantité :</label>
-                    <input type="number" min="0" value="` + panierBack.quantite + `"class="form-control h-100" name="quantite" id="quantite">
-                    </div>`;*/
-                    let annule = document.createElement("i");
-                    annule.setAttribute('class', 'fas fa-times-circle close');
-                    annule.setAttribute('id', 'retireTeddy');
-                    let hr = document.createElement("hr");
-                    /*let plus = document.createElement("i");
-                    plus.setAttribute('class', 'fas fa-plus-circle w-10');
-                    let minus = document.createElement("i");
-                    minus.setAttribute('class', 'fas fa-minus-circle w-10');*/
-                    panierInterieur.appendChild(item);
-                    item.appendChild(nom);
-                    item.appendChild(prix);
-                    //item.appendChild(quantite);
-                    item.appendChild(annule);
-                    panierInterieur.appendChild(hr);
-                    //item.appendChild(plus);
-                    //item.appendChild(minus);
-                    /*quantite.addEventListener('change', ()=>{
-                        if(quantite.value==0){
-                            console.log('0 dans le panier');
-                            item.remove();
-                        }
-                    })*/
-                })
-                let total = 0;
-                panierBacks.forEach(function(panierBack){
-                    total += panierBack.prix/100;
-                })
-                let prixTotal = document.createElement("div");
-                prixTotal.setAttribute('class', 'p-4');
-                prixTotal.textContent = 'Prix total : ' + total + '€';
-                panierInterieur.appendChild(prixTotal);
-                let viderPanier = document.createElement("button");
-                viderPanier.setAttribute('class', 'btn btn-danger w-50');              
-                viderPanier.textContent = 'Vider le panier';
-                panier.appendChild(viderPanier);
-                viderPanier.addEventListener('click', ()=>{
-                    localStorage.clear();
-                    this.getFromTheStorage();
-                    viderPanier.remove();
+                if(panierBack.length == 0){
+                    console.log(panierBack.length);
+                    let panierVide = document.createElement("p");
+                    panierVide.setAttribute('class', '');
+                    panierVide.textContent = 'Panier vide';
+                    panier.appendChild(panierVide);
+                    if(document.getElementById('viderPanier')){
+                        document.getElementById('viderPanier').remove();
+                    }else{
+
+                    }
                     document.getElementById('panierInterieur').remove();
-                })
-                
+                }else{
+                    document.getElementById('panierInterieur').innerHTML = null;
+                    if(document.getElementById('viderPanier')){
+                        document.getElementById('viderPanier').remove();
+                    }else{
+
+                    }
+                    this.panierBacks = panierBacks;
+                    console.log(panierBacks.length);
+                    for (let i = 0; i < panierBacks.length; i++){
+                        console.log('coucou dans le for\'t');
+                        let item = document.createElement("div");
+                        item.setAttribute('id', 'item' + [i]);
+                        item.setAttribute('class', 'item d-sm-flex justify-content-between flex-row');
+                        let nom = document.createElement("p");
+                        nom.setAttribute('class','w-50');
+                        nom.textContent = panierBack[i].nom;
+                        let prix = document.createElement("p");
+                        prix.setAttribute('class','w-25');
+                        prix.textContent = panierBack[i].prix /100 + '€';
+                        let annule = document.createElement("i");
+                        annule.setAttribute('id', 'annule' + [i]);
+                        annule.setAttribute('class', 'fas fa-times-circle close retireTeddy');
+                        annule.addEventListener('click', (event)=>{
+                            console.log('je veux retirer ce teddy');
+                            this.removeTeddy(i);
+                        })
+
+                        let hr = document.createElement("hr");
+                        panierInterieur.appendChild(item);
+                        item.appendChild(nom);
+                        item.appendChild(prix);
+                        item.appendChild(annule);
+                        panierInterieur.appendChild(hr);    
+                    }
+                    /*panierBacks.forEach(function(panierBack){
+                        let item = document.createElement("div");
+                        item.setAttribute('class', 'item d-sm-flex justify-content-between flex-row');
+                        let nom = document.createElement("p");
+                        nom.setAttribute('class','w-50');
+                        nom.textContent = panierBack.nom;
+                        let prix = document.createElement("p");
+                        prix.setAttribute('class','w-25');
+                        prix.textContent = panierBack.prix /100 + '€';
+                        /*let quantite = document.createElement("form");
+                        quantite.innerHTML = `<div class="form-group">
+                        <label for="quantite">Quantité :</label>
+                        <input type="number" min="0" value="` + panierBack.quantite + `"class="form-control h-100" name="quantite" id="quantite">
+                        </div>`;*/
+                        /*let annule = document.createElement("i");
+                        annule.setAttribute('class', 'fas fa-times-circle close retireTeddy');
+                        annule.addEventListener('click', (event)=>{
+                            console.log('je veux retirer ce teddy');
+                            //this.removeTeddy(event);
+                        })
+                        let hr = document.createElement("hr");
+                        /*let plus = document.createElement("i");
+                        plus.setAttribute('class', 'fas fa-plus-circle w-10');
+                        let minus = document.createElement("i");
+                        minus.setAttribute('class', 'fas fa-minus-circle w-10');*/
+                        /*panierInterieur.appendChild(item);
+                        item.appendChild(nom);
+                        item.appendChild(prix);
+                        //item.appendChild(quantite);
+                        item.appendChild(annule);
+                        panierInterieur.appendChild(hr);
+                        //item.appendChild(plus);
+                        //item.appendChild(minus);
+                        /*quantite.addEventListener('change', ()=>{
+                            if(quantite.value==0){
+                                console.log('0 dans le panier');
+                                item.remove();
+                            }
+                        })*/
+                    //})
+                    let total = 0;
+                    panierBacks.forEach(function(panierBack){
+                        total += panierBack.prix/100;
+                    })
+                    let prixTotal = document.createElement("div");
+                    prixTotal.setAttribute('class', 'p-4');
+                    prixTotal.textContent = 'Prix total : ' + total + '€';
+                    panierInterieur.appendChild(prixTotal);
+                    let viderPanier = document.createElement("button");
+                    viderPanier.setAttribute('id', 'viderPanier');
+                    viderPanier.setAttribute('class', 'btn btn-danger w-50');              
+                    viderPanier.textContent = 'Vider le panier';
+                    panier.appendChild(viderPanier);
+                    viderPanier.addEventListener('click', ()=>{
+                        localStorage.clear();
+                        this.getFromTheStorage();
+                        viderPanier.remove();
+                        document.getElementById('panierInterieur').remove();
+                    })
+                }     
             }else{
                 console.log('ça merde  = pas un tableau');
             }
@@ -223,21 +277,31 @@ class TeddyManager {
             panierVide.textContent = 'Panier vide';
             panier.appendChild(panierVide);  
         }
-        document.getElementById('retireTeddy').addEventListener('click', (event=>{
+        /*let retireTeddy = document.getElementsByClassName('retireTeddy');
+        retireTeddy.addEventListener('click', (event)=>{
             console.log('je veux retirer ce teddy');
             this.removeTeddy(event);
-        }))
+        })*/
         document.getElementById('envoiPost').addEventListener('click', (event)=>{
             console.log('c\'est cliqué');
             this.controlPanier(event);
         })
     }
-    removeTeddy(event){
+    removeTeddy(i){
         console.log('ok j\'ai vu que tu voulais le retirer');
+        this.panierBacks.splice(i, 1);
+        console.log(this.panierBacks);
         //recupérer le array
         // retirer ce teddy
+        let strPanierBack = JSON.stringify(this.panierBacks);
+        console.log(strPanierBack);
         // strinfy le array
+        localStorage.clear();
+        console.log('localstorage vidé normalement ?')
+        localStorage.setItem('strPanier', strPanierBack);
+        console.log('localstorage mis à jour normalement ?')
         // mettre à jour le localStorage
+        this.getFromTheStorage();
         // relancer getFromTheStorage  
     }
     controlPanier(event){
@@ -271,12 +335,55 @@ class TeddyManager {
         }
         if(chiffre.test(formNom)==false && chiffre.test(formPrenom)==false && chiffre.test(formVille)==false && verifAt.test(formMail)==true){
             console.log('On peut POST !')
-            
+            let arrayProducts = [];
+            console.log(this.panierBacks)
+            this.panierBacks.forEach(function(panierBack){
+                console.log('on démarre la complétion du tableau')
+                arrayProducts.push(panierBack.id);
+                console.log(arrayProducts);
+            });
+            let objetContact = {
+                nom : document.getElementById('formNom').value,
+                prénom : document.getElementById('formPrenom').value,
+                mail : document.getElementById('formMail').value,
+                adresse : document.getElementById('formAdresse').value,
+                ville : document.getElementById('formVille').value
+            }
+            console.log(objetContact);
+            this.contact = JSON.stringify(objetContact);
+            console.log(this.contact);
+            this.product_id = JSON.stringify(arrayProducts);
+            console.log(this.product_id);
+            this.postTeddy()
+
 
         }else{
             console.log('il reste un problème');
             
         }
+        
+    };
+    postTeddy(){
+        //return new Promise((resolve)=>{
+            console.log(this.contact);
+            let post = new XMLHttpRequest();
+            /*post.onreadystatechange = function() {
+                if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+                    resolve(JSON.parse(this.responseText));
+                }else{
+                    // throw new Error('error dans appel');
+                    console.log('erreur dans le post')
+                }
+            };*/
+            post.open("POST", APIURL + "order");
+            post.setRequestHeader("Content-Type", "application/json");
+            post.send(this.contact);
+        //});
+    }
+    async showOrder(){
+        console.log('let\'s the show begin !');
+        const confirmation = await this.postTeddy();
+        console.log(confirmation);
     }
       
 }
