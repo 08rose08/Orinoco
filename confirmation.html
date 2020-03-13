@@ -13,7 +13,9 @@
 <body>
   <header id="header">
   </header>
-  <main id="message">
+  <main id="message" class="m-3">
+    <h1>Merci <span id='nom'></span>!</h1>
+    <p id='order'></p>
 
   </main>
   <script src="header.js"></script>
@@ -23,7 +25,7 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
   <script>
     let teddyManager=new TeddyManager();
-     
+    teddyManager.showOrder();
   </script>  
 </body>
 </html>

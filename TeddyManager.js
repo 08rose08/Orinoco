@@ -11,7 +11,11 @@ class TeddyManager {
         this.teddy = null;
         this.panierBacks = null;
         this.contact = null;
-        this.product_id = null;
+        this.products = null;
+        this.arrayProducts = null;
+        this.trucPost = null;
+        this.objetPost = null;
+        this.prixFinal = null;
         
     }
 
@@ -252,6 +256,8 @@ class TeddyManager {
                     panierBacks.forEach(function(panierBack){
                         total += panierBack.prix/100;
                     })
+                    this.prixFinal = total;
+                    console.log(this.prixFinal);
                     let prixTotal = document.createElement("div");
                     prixTotal.setAttribute('class', 'p-4');
                     prixTotal.textContent = 'Prix total : ' + total + '€';
@@ -287,9 +293,10 @@ class TeddyManager {
             this.controlPanier(event);
         })
     }
+    
     removeTeddy(i){
         console.log('ok j\'ai vu que tu voulais le retirer');
-        this.panierBacks.splice(i, 1);
+        this.panierBacks.splice(i, 1); 
         console.log(this.panierBacks);
         //recupérer le array
         // retirer ce teddy
@@ -297,15 +304,15 @@ class TeddyManager {
         console.log(strPanierBack);
         // strinfy le array
         localStorage.clear();
-        console.log('localstorage vidé normalement ?')
+        console.log('localstorage vidé normalement ?');
         localStorage.setItem('strPanier', strPanierBack);
-        console.log('localstorage mis à jour normalement ?')
+        console.log('localstorage mis à jour normalement ?');
         // mettre à jour le localStorage
         this.getFromTheStorage();
         // relancer getFromTheStorage  
     }
     controlPanier(event){
-        event.preventDefault();
+        //event.preventDefault();
         console.log('Go control !');
         let chiffre = /[0-9]/;
         let verifAt = /.+@.+\..+/;
@@ -335,26 +342,31 @@ class TeddyManager {
         }
         if(chiffre.test(formNom)==false && chiffre.test(formPrenom)==false && chiffre.test(formVille)==false && verifAt.test(formMail)==true){
             console.log('On peut POST !')
-            let arrayProducts = [];
+            let arrayProductsT = [];
             console.log(this.panierBacks)
             this.panierBacks.forEach(function(panierBack){
                 console.log('on démarre la complétion du tableau')
-                arrayProducts.push(panierBack.id);
-                console.log(arrayProducts);
+                arrayProductsT.push(panierBack.id);
+                console.log(arrayProductsT);
             });
-            let objetContact = {
-                nom : document.getElementById('formNom').value,
-                prénom : document.getElementById('formPrenom').value,
-                mail : document.getElementById('formMail').value,
-                adresse : document.getElementById('formAdresse').value,
-                ville : document.getElementById('formVille').value
+            this.arrayProducts = arrayProductsT;
+            sessionStorage.setItem('nom', document.getElementById('formPrenom').value)
+            this.contact = {
+                firstName : document.getElementById('formPrenom').value,
+                lastName : document.getElementById('formNom').value,
+                address : document.getElementById('formAdresse').value,
+                city : document.getElementById('formVille').value,
+                email : document.getElementById('formMail').value,
             }
-            console.log(objetContact);
-            this.contact = JSON.stringify(objetContact);
-            console.log(this.contact);
-            this.product_id = JSON.stringify(arrayProducts);
-            console.log(this.product_id);
-            this.postTeddy()
+            this.objetPost = {
+                
+                products : this.arrayProducts,
+                contact : this.contact,
+            }
+            console.log(this.objetPost);
+            this.trucPost = JSON.stringify(this.objetPost);
+            console.log(this.trucPost);
+            this.postTeddy();
 
 
         }else{
@@ -364,26 +376,48 @@ class TeddyManager {
         
     };
     postTeddy(){
-        //return new Promise((resolve)=>{
-            console.log(this.contact);
+        console.log(this.prixFinal);
+        sessionStorage.setItem('prix', this.prixFinal);
+        return new Promise((resolve)=>{
+            console.log('Post-apocalyptique ?');
             let post = new XMLHttpRequest();
-            /*post.onreadystatechange = function() {
-                if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
-                    resolve(JSON.parse(this.responseText));
+            post.onload = function() {
+                if (this.readyState == XMLHttpRequest.DONE && this.status == 201) {
+                    let laReponse = JSON.parse(this.responseText);
+                    console.log(laReponse);
+                    console.log(laReponse.orderId);
+                    sessionStorage.setItem('numero', laReponse.orderId);
+                    resolve(laReponse);
+                    
+                    
                 }else{
                     // throw new Error('error dans appel');
                     console.log('erreur dans le post')
                 }
-            };*/
+            };
             post.open("POST", APIURL + "order");
             post.setRequestHeader("Content-Type", "application/json");
-            post.send(this.contact);
-        //});
+            //post.send(this.products);
+            post.send(this.trucPost);
+        
+            
+        });
+        
     }
     async showOrder(){
         console.log('let\'s the show begin !');
-        const confirmation = await this.postTeddy();
-        console.log(confirmation);
+        //const confirmation = await this.postTeddy();
+        //console.log(confirmation);
+        let numeroFinal = sessionStorage.getItem('numero');
+        console.log(numeroFinal);
+        let prixAffiche = sessionStorage.getItem('prix');
+        console.log(prixAffiche);
+        let nom = sessionStorage.getItem('nom');
+        let merci = document.getElementById('nom');
+        merci.textContent = nom;
+        let order = document.getElementById('order');
+        order.textContent = 'Votre commande de ' + prixAffiche + '€ porte le numéro : ' + numeroFinal;
+        
     }
       
 }
