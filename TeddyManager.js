@@ -39,6 +39,7 @@ class TeddyManager {
         teddies.forEach(function (teddie) {
             let carteTeddie = document.createElement("div");
             carteTeddie.setAttribute('class', 'card bg-dark text-white w-25 m-3');
+            carteTeddie.setAttribute('id', 'carte');
             let imageTeddie = document.createElement("img");
             imageTeddie.setAttribute('src', teddie.imageUrl);
             imageTeddie.setAttribute('class', 'card-img-top');
@@ -290,7 +291,8 @@ class TeddyManager {
         })*/
         document.getElementById('envoiPost').addEventListener('click', (event)=>{
             console.log('c\'est cliqué');
-            this.controlPanier(event);
+            this.verifierChampsVides(event);
+            //this.controlPanier(event);
         })
     }
     
@@ -302,7 +304,7 @@ class TeddyManager {
         // retirer ce teddy
         let strPanierBack = JSON.stringify(this.panierBacks);
         console.log(strPanierBack);
-        // strinfy le array
+        // stringify le array
         localStorage.clear();
         console.log('localstorage vidé normalement ?');
         localStorage.setItem('strPanier', strPanierBack);
@@ -311,9 +313,48 @@ class TeddyManager {
         this.getFromTheStorage();
         // relancer getFromTheStorage  
     }
+
+    verifierChampsVides(event){
+        event.preventDefault();
+        //if panier est pas vide
+        let strPanierBack = localStorage.getItem('strPanier');
+        console.log(strPanierBack);
+        let panierBacks = JSON.parse(strPanierBack);
+        console.log(panierBacks);
+
+        if(panierBacks != null && panierBacks.length > 0){
+
+            //                           0            1               2              3                4
+            var tabId      = new Array('formNom',   'formPrenom',   'formMail',    'formAdresse',   'formVille');
+            var tabMessage = new Array('votre nom', 'votre prénom', 'votre email', 'votre adresse', 'votre ville');
+            var nomForm    = 'frm';
+            var br = '\n', mes = '';
+            for (var i = 0; i < tabId.length; i++){
+                document.getElementById(tabId[i]).value = document.getElementById(tabId[i]).value.trim();//trim permet de eliminer les espaces
+                if(document.getElementById(tabId[i]).value == ''){
+                    mes = mes + br + ' - ' + tabMessage[i] + ' ;';
+                }
+            }
+            if(mes != ''){
+                alert('ERREUR :' + br + br + 'Il manque :' + mes);
+            } else{
+                console.log('Pas de champ vide'); 
+                // ----> envoyer 
+                this.controlPanier(event);
+            
+            // a remplacer par ...
+            // document.forms[nomForm].action = './confirmation.html';
+            // document.forms[nomForm].submit();
+            }
+        }else{
+            alert('Panier vide')
+        }
+    }
+
     controlPanier(event){
-        //event.preventDefault();
+        event.preventDefault();
         console.log('Go control !');
+        
         let chiffre = /[0-9]/;
         let verifAt = /.+@.+\..+/;
         let formNom = document.getElementById('formNom').value;
@@ -366,15 +407,15 @@ class TeddyManager {
             console.log(this.objetPost);
             this.trucPost = JSON.stringify(this.objetPost);
             console.log(this.trucPost);
-            this.postTeddy();
+            this.postTeddy(); // passer à la page confirmation seulement après que postTeddy soit ok
 
 
         }else{
-            console.log('il reste un problème');
-            
+            console.log('il reste un problème'); 
         }
-        
+          
     };
+
     postTeddy(){
         console.log(this.prixFinal);
         sessionStorage.setItem('prix', this.prixFinal);
