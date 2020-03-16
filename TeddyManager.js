@@ -327,7 +327,7 @@ class TeddyManager {
             //                           0            1               2              3                4
             var tabId      = new Array('formNom',   'formPrenom',   'formMail',    'formAdresse',   'formVille');
             var tabMessage = new Array('votre nom', 'votre prénom', 'votre email', 'votre adresse', 'votre ville');
-            var nomForm    = 'frm';
+            //var nomForm    = 'frm';
             var br = '\n', mes = '';
             for (var i = 0; i < tabId.length; i++){
                 document.getElementById(tabId[i]).value = document.getElementById(tabId[i]).value.trim();//trim permet de eliminer les espaces
