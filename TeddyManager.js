@@ -440,6 +440,8 @@ class TeddyManager {
             post.setRequestHeader("Content-Type", "application/json");
             //post.send(this.products);
             post.send(this.trucPost);
+            document.forms['frm'].action = './confirmation.html';
+            document.forms['frm'].submit();
         
             
         });
