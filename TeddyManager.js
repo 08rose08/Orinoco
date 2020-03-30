@@ -1,10 +1,6 @@
 const APIURL = "http://localhost:3000/api/teddies/";
 class TeddyManager {
-    /*appel api, 
-    parse la réponse
-    affiche le résultat du parse dans la console
-    utilise le résultat dans la construction html
-    */
+    
     constructor(){
         console.log('coucou');
         this.teddies = null;
@@ -15,10 +11,11 @@ class TeddyManager {
         this.arrayProducts = null;
         this.trucPost = null;
         this.objetPost = null;
-        this.prixFinal = null;
-        
+        this.prixFinal = null;   
     }
-
+    /*appel api
+    parse la réponse
+    -> promesse*/
     getAllTeddy(){
         return new Promise((resolve)=>{
             let appel = new XMLHttpRequest();
@@ -33,6 +30,10 @@ class TeddyManager {
             appel.send();
         });  
     }
+    /*attrape la promesse de getAllTeddy
+    construit pour chaque item une carte produit
+    insère cette carte dans le html
+    */
     async showAllTeddy(){
         const teddies = await this.getAllTeddy();
         console.log(teddies);
@@ -63,10 +64,14 @@ class TeddyManager {
             etiquetteTeddie.appendChild(prixTeddie);
             etiquetteTeddie.appendChild(boutonTeddie);
         });
+        document.getElementById('erreur').remove();
+
     };
 
 
-
+    /* attrape le paramètre dans l'url
+    l'utilise pour fetch get
+    utilise la réponse pour remplir la carte produit*/
     getOneTeddy(){
         let id = location.search.substring(4); 
         console.log(id);
@@ -92,19 +97,27 @@ class TeddyManager {
             console.log('Il y a eu un problème avec fetch: ' + error.message);
         });
     }
+    /* vérifie que le panier existe et est un tableau
+    ajoute le teddy au panier*/
+
+    /**
+     * ajoute le teddy au panier
+     * @param {MouseEvent} event 
+     */
     addTeddy(event){
+        //console.log(event);
         console.log(this.teddy);
         //event.preventDefault();
         let strPanierBack = localStorage.getItem('strPanier');
-        
+        //si le panier existe ... sinon le créer et push le teddy     
         if(strPanierBack){
             let panierBack = JSON.parse(strPanierBack);
+            //si le panier est un tableau alors le remplir sinon le créer et push le teddy
             if(Array.isArray(panierBack)){
                 let teddyPanier = {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
                     id : this.teddy._id,
-                    //quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
                 panierBack.push(teddyPanier);
@@ -118,7 +131,6 @@ class TeddyManager {
                     nom : this.teddy.name,
                     prix : this.teddy.price,
                     id : this.teddy._id,
-                    //quantite : document.getElementById("quantite").value
                 }
                 console.log(teddyPanier);
                 tableauPanier.push(teddyPanier);
@@ -133,7 +145,6 @@ class TeddyManager {
                 nom : this.teddy.name,
                 prix : this.teddy.price,
                 id : this.teddy._id,
-                //quantite : document.getElementById("quantite").value
             }
             console.log(teddyPanier);
             tableauPanier.push(teddyPanier);
@@ -142,30 +153,28 @@ class TeddyManager {
             console.log(strPanierGo);
             localStorage.setItem('strPanier', strPanierGo);
         }
-        
-        /*let resultat = window.confirm('Voir le panier ?');
-        if (resultat = true){
-            window.location.href="panier.html";
-        }*/
     }
-    
+    // au clic : appelle addTeddy()
     putInTheStorage(){
         document.getElementById('panier').addEventListener('click', (event)=>{
             console.log(this);
             this.addTeddy(event);
-        }); 
-        //document.getElementById('panier').addEventListener('click', this.addTeddy); 
+        });  
     };
     
+    //afficher le contenu du panier
     getFromTheStorage(){
+        //récupérer le panier dans le localStorage
         let strPanierBack = localStorage.getItem('strPanier');
         console.log(strPanierBack);
         let panierBacks = JSON.parse(strPanierBack);
         console.log(panierBacks);
-
+        //si le panier existe, le parser sinon ... afficher panier vide
         if(strPanierBack){
             let panierBack = JSON.parse(strPanierBack);
+            //si le panier est un tableau ... sinon
             if(Array.isArray(panierBack)){
+                // si la longueur du tableau 0 alors afficher panier vide ... sinon L191
                 if(panierBack.length == 0){
                     console.log(panierBack.length);
                     let panierVide = document.createElement("p");
@@ -173,6 +182,7 @@ class TeddyManager {
                     panierVide.textContent = 'Panier vide';
                     panier.appendChild(panierVide);
                     if(document.getElementById('viderPanier')){
+                        // si le bouton vider le panier existe, le supprimer
                         document.getElementById('viderPanier').remove();
                     }else{
 
@@ -181,10 +191,12 @@ class TeddyManager {
                 }else{
                     document.getElementById('panierInterieur').innerHTML = null;
                     if(document.getElementById('viderPanier')){
+                        //si le bouton vider le panier existe, le supprimer
                         document.getElementById('viderPanier').remove();
                     }else{
 
                     }
+                    //récupérer le panier et pour chaque item afficher le nom, le prix, l'icone de suppression, et une barre de séparation
                     this.panierBacks = panierBacks;
                     console.log(panierBacks.length);
                     for (let i = 0; i < panierBacks.length; i++){
@@ -205,7 +217,6 @@ class TeddyManager {
                             console.log('je veux retirer ce teddy');
                             this.removeTeddy(i);
                         })
-
                         let hr = document.createElement("hr");
                         panierInterieur.appendChild(item);
                         item.appendChild(nom);
@@ -213,56 +224,19 @@ class TeddyManager {
                         item.appendChild(annule);
                         panierInterieur.appendChild(hr);    
                     }
-                    /*panierBacks.forEach(function(panierBack){
-                        let item = document.createElement("div");
-                        item.setAttribute('class', 'item d-sm-flex justify-content-between flex-row');
-                        let nom = document.createElement("p");
-                        nom.setAttribute('class','w-50');
-                        nom.textContent = panierBack.nom;
-                        let prix = document.createElement("p");
-                        prix.setAttribute('class','w-25');
-                        prix.textContent = panierBack.prix /100 + '€';
-                        /*let quantite = document.createElement("form");
-                        quantite.innerHTML = `<div class="form-group">
-                        <label for="quantite">Quantité :</label>
-                        <input type="number" min="0" value="` + panierBack.quantite + `"class="form-control h-100" name="quantite" id="quantite">
-                        </div>`;*/
-                        /*let annule = document.createElement("i");
-                        annule.setAttribute('class', 'fas fa-times-circle close retireTeddy');
-                        annule.addEventListener('click', (event)=>{
-                            console.log('je veux retirer ce teddy');
-                            //this.removeTeddy(event);
-                        })
-                        let hr = document.createElement("hr");
-                        /*let plus = document.createElement("i");
-                        plus.setAttribute('class', 'fas fa-plus-circle w-10');
-                        let minus = document.createElement("i");
-                        minus.setAttribute('class', 'fas fa-minus-circle w-10');*/
-                        /*panierInterieur.appendChild(item);
-                        item.appendChild(nom);
-                        item.appendChild(prix);
-                        //item.appendChild(quantite);
-                        item.appendChild(annule);
-                        panierInterieur.appendChild(hr);
-                        //item.appendChild(plus);
-                        //item.appendChild(minus);
-                        /*quantite.addEventListener('change', ()=>{
-                            if(quantite.value==0){
-                                console.log('0 dans le panier');
-                                item.remove();
-                            }
-                        })*/
-                    //})
+                    // calcul le prix total du panier
                     let total = 0;
                     panierBacks.forEach(function(panierBack){
                         total += panierBack.prix/100;
                     })
                     this.prixFinal = total;
                     console.log(this.prixFinal);
+                    //affiche le prix total
                     let prixTotal = document.createElement("div");
                     prixTotal.setAttribute('class', 'p-4');
                     prixTotal.textContent = 'Prix total : ' + total + '€';
                     panierInterieur.appendChild(prixTotal);
+                    //affiche le bouton vider le panier
                     let viderPanier = document.createElement("button");
                     viderPanier.setAttribute('id', 'viderPanier');
                     viderPanier.setAttribute('class', 'btn btn-danger w-50');              
@@ -284,50 +258,44 @@ class TeddyManager {
             panierVide.textContent = 'Panier vide';
             panier.appendChild(panierVide);  
         }
-        /*let retireTeddy = document.getElementsByClassName('retireTeddy');
-        retireTeddy.addEventListener('click', (event)=>{
-            console.log('je veux retirer ce teddy');
-            this.removeTeddy(event);
-        })*/
+        //lance verifierChampsVides au clic
         document.getElementById('envoiPost').addEventListener('click', (event)=>{
             console.log('c\'est cliqué');
             this.verifierChampsVides(event);
             //this.controlPanier(event);
         })
     }
-    
+    //suprime un teddy du panier
     removeTeddy(i){
         console.log('ok j\'ai vu que tu voulais le retirer');
-        this.panierBacks.splice(i, 1); 
-        console.log(this.panierBacks);
         //recupérer le array
         // retirer ce teddy
+        this.panierBacks.splice(i, 1); 
+        console.log(this.panierBacks);
+        // stringify le array
         let strPanierBack = JSON.stringify(this.panierBacks);
         console.log(strPanierBack);
-        // stringify le array
+        //vide le localstorage
         localStorage.clear();
         console.log('localstorage vidé normalement ?');
+        // mettre à jour le localStorage
         localStorage.setItem('strPanier', strPanierBack);
         console.log('localstorage mis à jour normalement ?');
-        // mettre à jour le localStorage
+        // relancer getFromTheStorage
         this.getFromTheStorage();
-        // relancer getFromTheStorage  
     }
-
+    //vérifie que les champs du formulaire ne sont pas vides
     verifierChampsVides(event){
         event.preventDefault();
-        //if panier est pas vide
         let strPanierBack = localStorage.getItem('strPanier');
         console.log(strPanierBack);
         let panierBacks = JSON.parse(strPanierBack);
         console.log(panierBacks);
-
+        //if panier est pas vide et sa longueur supérieur à 0 sinon... alert panier vide
         if(panierBacks != null && panierBacks.length > 0){
-
             //                           0            1               2              3                4
             var tabId      = new Array('formNom',   'formPrenom',   'formMail',    'formAdresse',   'formVille');
             var tabMessage = new Array('votre nom', 'votre prénom', 'votre email', 'votre adresse', 'votre ville');
-            //var nomForm    = 'frm';
             var br = '\n', mes = '';
             for (var i = 0; i < tabId.length; i++){
                 document.getElementById(tabId[i]).value = document.getElementById(tabId[i]).value.trim();//trim permet de eliminer les espaces
@@ -335,22 +303,18 @@ class TeddyManager {
                     mes = mes + br + ' - ' + tabMessage[i] + ' ;';
                 }
             }
+            //si message différent de '', affiche le message en alert sinon... appelle controlPanier
             if(mes != ''){
                 alert('ERREUR :' + br + br + 'Il manque :' + mes);
             } else{
                 console.log('Pas de champ vide'); 
-                // ----> envoyer 
                 this.controlPanier(event);
-            
-            // a remplacer par ...
-            // document.forms[nomForm].action = './confirmation.html';
-            // document.forms[nomForm].submit();
             }
         }else{
             alert('Panier vide')
         }
     }
-
+    //vérifie les inputs du formulaire
     controlPanier(event){
         event.preventDefault();
         console.log('Go control !');
@@ -407,7 +371,7 @@ class TeddyManager {
             console.log(this.objetPost);
             this.trucPost = JSON.stringify(this.objetPost);
             console.log(this.trucPost);
-            this.postTeddy(); // passer à la page confirmation seulement après que postTeddy soit ok
+            this.postTeddy(event); // passer à la page confirmation seulement après que postTeddy soit ok
 
 
         }else{
@@ -415,7 +379,7 @@ class TeddyManager {
         }
           
     };
-
+    //envoie la requête post de la commande avec le tableau d'items et l'objet contact
     postTeddy(){
         console.log(this.prixFinal);
         sessionStorage.setItem('prix', this.prixFinal);
@@ -423,7 +387,7 @@ class TeddyManager {
             console.log('Post-apocalyptique ?');
             let post = new XMLHttpRequest();
             post.onload = function() {
-                if (this.readyState == XMLHttpRequest.DONE && this.status == 201) {
+                if (this.readyState == XMLHttpRequest.DONE && this.status == 201){
                     let laReponse = JSON.parse(this.responseText);
                     console.log(laReponse);
                     console.log(laReponse.orderId);
@@ -438,7 +402,7 @@ class TeddyManager {
             };
             post.open("POST", APIURL + "order");
             post.setRequestHeader("Content-Type", "application/json");
-            //post.send(this.products);
+            
             post.send(this.trucPost);
             document.forms['frm'].action = './confirmation.html';
             document.forms['frm'].submit();
@@ -447,19 +411,24 @@ class TeddyManager {
         });
         
     }
+    //affiche le message de confirmation à partir du sessionStorage
     async showOrder(){
         console.log('let\'s the show begin !');
-        //const confirmation = await this.postTeddy();
-        //console.log(confirmation);
         let numeroFinal = sessionStorage.getItem('numero');
         console.log(numeroFinal);
         let prixAffiche = sessionStorage.getItem('prix');
         console.log(prixAffiche);
         let nom = sessionStorage.getItem('nom');
-        let merci = document.getElementById('nom');
-        merci.textContent = nom;
+        let merciMess = document.getElementById('nom');
         let order = document.getElementById('order');
-        order.textContent = 'Votre commande de ' + prixAffiche + '€ porte le numéro : ' + numeroFinal;
+        if (numeroFinal != null){
+            merciMess.textContent = nom;
+            order.textContent = 'Votre commande de ' + prixAffiche + '€ porte le numéro : ' + numeroFinal;
+        }else{
+            document.getElementById('merci').textContent = 'Saperlipopette !';
+            order.textContent = 'Il y a un souci avec votre commande.'
+        }
+        
         
     }
       
