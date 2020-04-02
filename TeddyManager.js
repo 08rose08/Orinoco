@@ -1,6 +1,5 @@
 const APIURL = "http://localhost:3000/api/teddies/";
 class TeddyManager {
-    
     constructor(){
         console.log('coucou');
         this.teddies = null;
@@ -65,10 +64,7 @@ class TeddyManager {
             etiquetteTeddie.appendChild(boutonTeddie);
         });
         document.getElementById('erreur').remove();
-
     };
-
-
     /* attrape le paramètre dans l'url
     l'utilise pour fetch get
     utilise la réponse pour remplir la carte produit*/
@@ -99,7 +95,6 @@ class TeddyManager {
     }
     /* vérifie que le panier existe et est un tableau
     ajoute le teddy au panier*/
-
     /**
      * ajoute le teddy au panier
      * @param {MouseEvent} event 
@@ -161,7 +156,6 @@ class TeddyManager {
             this.addTeddy(event);
         });  
     };
-    
     //afficher le contenu du panier
     getFromTheStorage(){
         //récupérer le panier dans le localStorage
@@ -185,7 +179,6 @@ class TeddyManager {
                         // si le bouton vider le panier existe, le supprimer
                         document.getElementById('viderPanier').remove();
                     }else{
-
                     }
                     document.getElementById('panierInterieur').remove();
                 }else{
@@ -194,7 +187,6 @@ class TeddyManager {
                         //si le bouton vider le panier existe, le supprimer
                         document.getElementById('viderPanier').remove();
                     }else{
-
                     }
                     //récupérer le panier et pour chaque item afficher le nom, le prix, l'icone de suppression, et une barre de séparation
                     this.panierBacks = panierBacks;
@@ -318,35 +310,40 @@ class TeddyManager {
     controlPanier(event){
         event.preventDefault();
         console.log('Go control !');
-        
         let chiffre = /[0-9]/;
         let verifAt = /.+@.+\..+/;
         let formNom = document.getElementById('formNom').value;
         let formPrenom = document.getElementById('formPrenom').value;
         let formVille = document.getElementById('formVille').value;
         let formMail= document.getElementById('formMail').value;
+        let br = '\n', mes = '';
         if(chiffre.test(formNom)==true){
             console.log('nom invalide');
+            mes = mes + br + ' - Nom invalide;';
         }else{
             console.log('nom ok')
         }
         if(chiffre.test(formPrenom)==true){
             console.log('Prénom invalide');
+            mes = mes + br + ' - Prénom invalide;';
         }else{
             console.log('prénom ok')
         }
         if(chiffre.test(formVille)==true){
             console.log('Ville invalide');
+            mes = mes + br + ' - Nom de ville invalide;';
         }else{
             console.log('ville ok')
         }
         if(verifAt.test(formMail)==false){
-            console.log('mail invalide')
+            console.log('mail invalide');
+            mes = mes + br + ' - Mail invalide;';
         }else{
             console.log('mail ok')
         }
         if(chiffre.test(formNom)==false && chiffre.test(formPrenom)==false && chiffre.test(formVille)==false && verifAt.test(formMail)==true){
             console.log('On peut POST !')
+            //-> le tableau de produits
             let arrayProductsT = [];
             console.log(this.panierBacks)
             this.panierBacks.forEach(function(panierBack){
@@ -355,7 +352,9 @@ class TeddyManager {
                 console.log(arrayProductsT);
             });
             this.arrayProducts = arrayProductsT;
-            sessionStorage.setItem('nom', document.getElementById('formPrenom').value)
+            sessionStorage.clear();
+            sessionStorage.setItem('nom', document.getElementById('formPrenom').value);
+            //-> l'objet contact
             this.contact = {
                 firstName : document.getElementById('formPrenom').value,
                 lastName : document.getElementById('formNom').value,
@@ -363,8 +362,8 @@ class TeddyManager {
                 city : document.getElementById('formVille').value,
                 email : document.getElementById('formMail').value,
             }
+            //-> objet à POST
             this.objetPost = {
-                
                 products : this.arrayProducts,
                 contact : this.contact,
             }
@@ -372,12 +371,11 @@ class TeddyManager {
             this.trucPost = JSON.stringify(this.objetPost);
             console.log(this.trucPost);
             this.postTeddy(event); // passer à la page confirmation seulement après que postTeddy soit ok
-
-
         }else{
-            console.log('il reste un problème'); 
+            //affiche le message d'erreur
+            console.log('il reste un problème');
+            alert('ERREUR :' + br + br + mes);
         }
-          
     };
     //envoie la requête post de la commande avec le tableau d'items et l'objet contact
     postTeddy(){
@@ -392,9 +390,7 @@ class TeddyManager {
                     console.log(laReponse);
                     console.log(laReponse.orderId);
                     sessionStorage.setItem('numero', laReponse.orderId);
-                    resolve(laReponse);
-                    
-                    
+                    resolve(laReponse);                 
                 }else{
                     // throw new Error('error dans appel');
                     console.log('erreur dans le post')
@@ -402,14 +398,10 @@ class TeddyManager {
             };
             post.open("POST", APIURL + "order");
             post.setRequestHeader("Content-Type", "application/json");
-            
             post.send(this.trucPost);
             document.forms['frm'].action = './confirmation.html';
             document.forms['frm'].submit();
-        
-            
         });
-        
     }
     //affiche le message de confirmation à partir du sessionStorage
     async showOrder(){
@@ -428,8 +420,5 @@ class TeddyManager {
             document.getElementById('merci').textContent = 'Saperlipopette !';
             order.textContent = 'Il y a un souci avec votre commande.'
         }
-        
-        
     }
-      
 }
