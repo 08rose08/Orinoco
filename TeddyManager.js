@@ -168,7 +168,7 @@ class TeddyManager {
             let panierBack = JSON.parse(strPanierBack);
             //si le panier est un tableau ... sinon
             if(Array.isArray(panierBack)){
-                // si la longueur du tableau 0 alors afficher panier vide ... sinon L191
+                // si la longueur du tableau 0 alors afficher panier vide ... sinon l191
                 if(panierBack.length == 0){
                     console.log(panierBack.length);
                     let panierVide = document.createElement("p");
@@ -242,7 +242,7 @@ class TeddyManager {
                     })
                 }     
             }else{
-                console.log('ça merde  = pas un tableau');
+                console.log('ça m*rde  = pas un tableau');
             }
         }else{
             let panierVide = document.createElement("p");
@@ -250,11 +250,10 @@ class TeddyManager {
             panierVide.textContent = 'Panier vide';
             panier.appendChild(panierVide);  
         }
-        //lance verifierChampsVides au clic
+        //lance checkEmptyInput au clic
         document.getElementById('envoiPost').addEventListener('click', (event)=>{
             console.log('c\'est cliqué');
-            this.verifierChampsVides(event);
-            //this.controlPanier(event);
+            this.checkEmptyInput(event);
         })
     }
     //suprime un teddy du panier
@@ -277,7 +276,7 @@ class TeddyManager {
         this.getFromTheStorage();
     }
     //vérifie que les champs du formulaire ne sont pas vides
-    verifierChampsVides(event){
+    checkEmptyInput(event){
         event.preventDefault();
         let strPanierBack = localStorage.getItem('strPanier');
         console.log(strPanierBack);
@@ -390,6 +389,13 @@ class TeddyManager {
                     console.log(laReponse);
                     console.log(laReponse.orderId);
                     sessionStorage.setItem('numero', laReponse.orderId);
+                    sessionStorage.length;
+                    let numeroFinal = sessionStorage.getItem('numero');
+                    console.log(numeroFinal);
+                    let prixAffiche = sessionStorage.getItem('prix');
+                    console.log(prixAffiche);
+                    let nom = sessionStorage.getItem('nom');
+                    console.log(nom);
                     resolve(laReponse);                 
                 }else{
                     // throw new Error('error dans appel');
@@ -413,6 +419,7 @@ class TeddyManager {
         let nom = sessionStorage.getItem('nom');
         let merciMess = document.getElementById('nom');
         let order = document.getElementById('order');
+        //si pas de numero de commande alors message d'erreur
         if (numeroFinal != null){
             merciMess.textContent = nom;
             order.textContent = 'Votre commande de ' + prixAffiche + '€ porte le numéro : ' + numeroFinal;
