@@ -427,6 +427,7 @@ class TeddyManager {
         if (numeroFinal != null){
             merciMess.textContent = nom;
             order.textContent = 'Votre commande de ' + prixAffiche + '€ porte le numéro : ' + numeroFinal;
+            localStorage.clear();
         }else{
             document.getElementById('merci').textContent = 'Saperlipopette !';
             order.textContent = 'Il y a un souci avec votre commande.'
