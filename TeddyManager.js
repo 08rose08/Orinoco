@@ -389,28 +389,16 @@ class TeddyManager {
                     console.log(laReponse);
                     console.log(laReponse.orderId);
                     sessionStorage.setItem('numero', laReponse.orderId);
-                    /*sessionStorage.length;
-                    let numeroFinal = sessionStorage.getItem('numero');
-                    console.log(numeroFinal);
-                    let prixAffiche = sessionStorage.getItem('prix');
-                    console.log(prixAffiche);
-                    let nom = sessionStorage.getItem('nom');
-                    console.log(nom);*/
                     document.forms['frm'].action = './confirmation.html';
                     document.forms['frm'].submit();
                     resolve(laReponse);                 
                 }else{
-                    // throw new Error('error dans appel');
                     console.log('erreur dans le post')
                 }
             };
             post.open("POST", APIURL + "order");
             post.setRequestHeader("Content-Type", "application/json");
             post.send(this.trucPost);
-            
-            
-            
-            
         });
     }
     //affiche le message de confirmation à partir du sessionStorage
@@ -433,8 +421,4 @@ class TeddyManager {
             order.textContent = 'Il y a un souci avec votre commande.'
         }
     }
-    /*async showOrder(){
-        const order = await this.postTeddy();
-        console.log(order);
-    }*/
 }
